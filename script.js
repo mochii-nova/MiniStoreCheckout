@@ -35,4 +35,23 @@ function getDeliveryFee(option) {
         default:
         fee = 0;
     }
+
+    return fee;
+}
+
+function getDeliveryTypeName(option) {
+    switch (option) {
+        case "1": return "Store Pickup";
+        case "2": return "Standard Delivery";
+        case "3": return "Express Delivery";
+        default: return "Unknown";
+    }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        calculateItemAmount,
+        calculateDiscount,
+        getDeliveryFee
+    };
 }
