@@ -24,14 +24,14 @@ function getDeliveryFee(option) {
 
     switch (option) {
         case "1":
-        fee = 0;
+        fee = 0;   
         break;
         case "2":
-        fee = 80;
+        fee = 80;  
         break;
         case "3":
-        fee = 150;
-        break
+        fee = 150; 
+        break;
         default:
         fee = 0;
     }
@@ -56,7 +56,36 @@ if (typeof module !== 'undefined' && module.exports) {
     };
 }
 
-function generateProductField() {
+function generateProductFields() {
     const productCount = Number(document.getElementById("productCount").value);
-    const container = document.getElementById("productContainer");
+    const container = document.getElementById("productsContainer");
+    const validationMessage = document.getElementById("validationMessage");
+
+    container.innerHTML = "";
+    validationMessage.textContent = "";
+
+    if (!productCount || productCount <= 0 || !Number.isInteger(productCount)) {
+        validationMessage.textContent = "Please enter a valid positive number of products.";
+        return;
+    }
+
+    let fieldsHTML = "";
+
+    for (let i = 0; i < productCount; i++) {
+        fieldsHTML += `
+        <div class="product-block">
+            <h3>Product ${i + 1}</h3>
+            <label for="productName-${i}">Product Name</label>
+            <input type="text" id="productName-${i}" placeholder="Product Name" />
+
+            <label for="productPrice-${i}">Price</label>
+            <input type="number" id="productPrice-${i}" placeholder="Price" />
+
+            <label for="productQuantity-${i}">Quantity</label>
+            <input type="number" id="productQuantity-${i}" placeholder="Quantity" />
+        </div>
+        `;
+    }
+
+    container.innerHTML = fieldsHTML;
 }
