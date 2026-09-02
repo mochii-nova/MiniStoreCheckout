@@ -55,3 +55,8 @@ if (typeof module !== 'undefined' && module.exports) {
         getDeliveryFee
     };
 }
+
+function generateProductField() {
+    const productCount = Number(document.getElementById("productCount").value);
+    const container = document.getElementById("productContainer");
+}
