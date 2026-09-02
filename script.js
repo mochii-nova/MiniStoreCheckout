@@ -89,3 +89,101 @@ function generateProductFields() {
 
     container.innerHTML = fieldsHTML;
 }
+
+function handleCalculateOrder() {
+    const validationMessage = document.getElementById("validationMessage");
+    const orderSummary = document.getElementById("orderSummary");
+    validationMessage.textContent = "";
+    orderSummary.style.display = "none";
+    orderSummary.textContent = "";
+
+    const customerName = document.getElementById("customerName").value.trim();
+    const productCount = Number(document.getElementById("productCount").value);
+    const deliveryOption = document.getElementById("deliveryOption").value;
+
+    let errors = "";
+
+    if (customerName === "") {
+        errors += "Customer name is required.\n";
+    }
+
+    if (!productCount || productCount <= 0 || !Number.isInteger(productCount)) {
+        errors += "Number of products must be a valid positive whole number.\n";
+    }
+
+    if (errors !== "") {
+        validationMessage.textContent = errors;
+        return;
+    }
+
+    let subtotal = 0;          
+    let productDetailsText = "";
+
+    for (let i = 0; i < productCount; i++) {
+        const nameField = document.getElementById(`productName-${i}`);
+        const priceField = document.getElementById(`productPrice-${i}`);
+        const quantityField = document.getElementById(`productQuantity-${i}`);
+
+        if (!nameField || !priceField || !quantityField) {
+            errors += `Product ${i + 1} fields were not generated. Re-enter the number of products.\n`;
+            continue;
+        }
+
+        const name = nameField.value.trim();
+        const price = parseFloat(priceField.value);
+        const quantity = Number(quantityField.value);
+
+        if (name === "") {
+            errors += `Product ${i + 1}: name is required.\n`;
+        }
+        if (isNaN(price) || price <= 0) {
+            errors += `Product ${i + 1}: price must be a valid positive number.\n`;
+        }
+        if (isNaN(quantity) || quantity <= 0 || !Number.isInteger(quantity)) {
+            errors += `Product ${i + 1}: quantity must be a valid positive whole number (no decimals).\n`;
+        }
+
+        if (name !== "" && !isNaN(price) && price > 0 && !isNaN(quantity) && quantity > 0 && Number.isInteger(quantity)) {
+            const itemAmount = calculateItemAmount(price, quantity);
+            subtotal += itemAmount; 
+
+            productDetailsText += `${i + 1}. ${name}\n`;
+            productDetailsText += `   Price: ₱${price.toFixed(2)}\n`;
+            productDetailsText += `   Quantity: ${quantity}\n`;
+            productDetailsText += `   Amount: ₱${itemAmount.toFixed(2)}\n\n`;
+        }
+    }
+
+    if (errors !== "") {
+        validationMessage.textContent = errors;
+        return;
+    }
+
+    const discountAmount = calculateDiscount(subtotal);
+    const discountRatePercent = subtotal > 0 ? Math.round((discountAmount / subtotal) * 100) : 0;
+    const deliveryFee = getDeliveryFee(deliveryOption);
+    const deliveryTypeName = getDeliveryTypeName(deliveryOption);
+    const finalAmount = subtotal - discountAmount + deliveryFee;
+
+    const summaryText =
+        `MINI STORE CHECKOUT SYSTEM
+
+        Customer: ${customerName}
+
+        ${productDetailsText}ORDER SUMMARY
+        Subtotal: ₱${subtotal.toFixed(2)}
+        Discount Rate: ${discountRatePercent}%
+        Discount Amount: ₱${discountAmount.toFixed(2)}
+        Delivery Type: ${deliveryTypeName}
+        Delivery Fee: ₱${deliveryFee.toFixed(2)}
+        Final Amount: ₱${finalAmount.toFixed(2)}`;
+
+    orderSummary.textContent = summaryText;
+    orderSummary.style.display = "block";
+}
+
+if (typeof module === 'undefined' || !module.exports) {
+    document.getElementById("productCount").addEventListener("input", generateProductFields);
+    document.getElementById("productCount").addEventListener("change", generateProductFields);
+    document.getElementById("calculateBtn").addEventListener("click", handleCalculateOrder);
+}
