@@ -17,3 +17,22 @@ function calculateDiscount(subtotal) {
 
     return subtotal * discountRate;
 }
+
+function getDeliveryFee(option) {
+    let fee = 0;
+    option = String(option);
+
+    switch (option) {
+        case "1":
+        fee = 0;
+        break;
+        case "2":
+        fee = 80;
+        break;
+        case "3":
+        fee = 150;
+        break
+        default:
+        fee = 0;
+    }
+}
